@@ -12,6 +12,11 @@ namespace LibraryAppTests
             lib.AddBook("1984", 1);
             return lib;
         }
+        private Library CreateZeroLibrary()
+        {
+            var lib = new Library("City Librar");
+            return lib;
+        }
 
         // ---- Constructor ----
 
@@ -22,6 +27,7 @@ namespace LibraryAppTests
             Assert.AreEqual("City Library", lib.GetName());
         }
         // TODO: null vagy üres névvel létrehozva ArgumentException-t kell dobni
+        
 
         [TestMethod]
         public void Constructor_EmptyName()
@@ -76,6 +82,13 @@ namespace LibraryAppTests
             Assert.IsFalse(result);
         }
         // TODO: az összes példány kikölcsönzése után újabb kölcsönzés false-t ad vissza
+        [TestMethod]
+        public void BorrowBook_ExistingTitle() 
+        {
+            var lib = CreateDefaultLibrary();
+            bool result = lib.BorrowBook("1984");
+            Assert.IsFalse(result);
+        }
 
         // ---- ReturnBook ----
 
@@ -89,7 +102,24 @@ namespace LibraryAppTests
             Assert.AreEqual(1, lib.GetAvailableCopies("1984"));
         }
         // TODO: nem létező cím visszahozásakor false-t kell visszaadni
+        [TestMethod]
+        public void Return_NotExesting()
+        {
+            var lib = CreateDefaultLibrary();
+            bool result = lib.ReturnBook("aiudshasd");
+            Assert.IsFalse(result);
+        }
         // TODO: olyan könyv visszahozásakor, amelyből semmi sincs kikölcsönzve, false-t kell adni
+        [TestMethod]
+        public void Return_NotBorrowed()
+        {
+            var lib = CreateDefaultLibrary();
+            bool result = lib.ReturnBook("Dune");
+            Assert.IsFalse(result);
+        }
+
+
+
 
         // ---- GetAvailableCopies ----
 
@@ -102,6 +132,14 @@ namespace LibraryAppTests
             Assert.AreEqual(1, lib.GetAvailableCopies("Dune"));
         }
         // TODO: nem létező cím esetén -1-et kell visszaadni
+        [TestMethod]
+        public void GetAvailableCopies_NotExistingTitle()
+        {
+            var lib = CreateDefaultLibrary();
+            lib.BorrowBook("Dune");
+            lib.BorrowBook("Dune");
+            Assert.AreEqual(1, lib.GetAvailableCopies("Dune"));
+        }
 
         // ---- IsAvailable ----
 
@@ -112,6 +150,16 @@ namespace LibraryAppTests
             Assert.IsTrue(lib.IsAvailable("Dune"));
         }
         // TODO: teljesen kikölcsönzött könyv esetén false-t kell visszaadni
+        [TestMethod]
+        public void IsAvailable_EveryThing()
+        {
+            var lib = CreateDefaultLibrary();
+            lib.BorrowBook("Dune");
+            
+            Assert.IsTrue(lib.IsAvailable("Dune"));
+        }
+
+
         // TODO: nem létező cím esetén false-t kell visszaadni
 
         // ---- GetTotalBorrowed ----
@@ -125,6 +173,15 @@ namespace LibraryAppTests
             Assert.AreEqual(2, lib.GetTotalBorrowed());
         }
         // TODO: újonnan létrehozott, üres könyvtárban GetTotalBorrowed() nullát ad vissza
+        [TestMethod]
+        public void GetTotalBorrowed_NewBook()
+        {
+            var lib = CreateZeroLibrary();
+            lib.BorrowBook("Dune");
+            lib.ReturnBook("Dune");
+
+            Assert.AreEqual(0, lib.GetTotalBorrowed());
+        }
         // TODO: visszahozás után a kikölcsönzött darabszám helyesen csökken
 
         // ---- RemoveBook ----
@@ -138,6 +195,22 @@ namespace LibraryAppTests
             Assert.AreEqual(1, lib.GetTotalTitles());
         }
         // TODO: nem létező cím eltávolításakor false-t kell visszaadni
+        public void RemoveBook_NotExistingTitle()
+        {
+            var lib = CreateDefaultLibrary(); 
+            bool result = lib.RemoveBook("asdd");
+            Assert.IsFalse(result);
+           
+
+        }
         // TODO: eltávolítás után a cím már nem érhető el, GetAvailableCopies -1-et ad vissza
+        public void RemoveBook_DeleteExistingTitle()
+        {
+            var lib = CreateDefaultLibrary();
+            lib.RemoveBook("Dune");
+            Assert.AreEqual(-1, lib.GetAvailableCopies("Dune"));
+
+
+        }
     }
 }
