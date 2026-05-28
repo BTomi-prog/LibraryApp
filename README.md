@@ -121,4 +121,4 @@ Ha nincs hozzá írott teszt, az implementáció **2 pontot** ér az 5 helyett.
 | 4 – Jó | 75–88 pont |
 | 3 – Közepes | 62–74 pont |
 | 2 – Elégséges | 45–61 pont |
-| 1 – Elégtelen | 0–44 pont |# LibraryApp
+| 1 – Elégtelen | 0–44 pont |
